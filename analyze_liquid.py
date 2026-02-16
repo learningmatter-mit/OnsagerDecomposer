@@ -1,5 +1,5 @@
 # %%
-from MarkovTransportAnalyzer import *
+from onsagerdecomposer import *
 import pickle
 import os
 import argparse
