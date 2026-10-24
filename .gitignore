@@ -1,0 +1,9 @@
+# large local MD data and archived results (tens of GB)
+*_old_data/
+*.pickle
+*.traj
+__pycache__/
+*.egg-info/
+.pytest_cache/
+build/
+dist/
