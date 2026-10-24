@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onsagerdecomposer"
+version = "1.0.0"
+description = "Decompose Onsager transport coefficients from MD into additive, mechanism-resolved contributions."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "KyuJung Jun", email = "kyujung@korea.ac.kr" }]
+keywords = ["molecular dynamics", "ion transport", "Onsager coefficients", "electrolytes", "diffusion"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = ["numpy", "scipy", "pandas"]
+
+[project.optional-dependencies]
+crystal = ["ase", "networkx"]
+test = ["pytest", "ase", "networkx"]
+
+[project.urls]
+Homepage = "https://github.com/learningmatter-mit/OnsagerDecomposer"
+Issues = "https://github.com/learningmatter-mit/OnsagerDecomposer/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
