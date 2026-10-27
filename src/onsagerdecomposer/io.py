@@ -5,8 +5,9 @@ A HiTPoly analysis folder contains:
   xyz_unwrapped_rdf_all.txt   one line per atom per frame: x,y,z  (unwrapped, Angstrom)
   box_len.txt                 cubic box length (Angstrom)
 
-The type label prefix sets the residue kind: PL* -> "solvent" (solvent molecule or
-polymer chain), AN* -> "anion", CA* -> "cation".
+The type label prefix sets the residue kind: AN* -> "anion", CA* -> "cation", and any other
+label starting with P -> "solvent" (solvent molecule or polymer chain: PL* for one monomer type,
+P1*, P2*, ... for the blocks of a copolymer).
 """
 import warnings
 from dataclasses import dataclass
@@ -15,7 +16,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-KIND_PREFIXES = {"PL": "solvent", "AN": "anion", "CA": "cation"}
+def residue_kind(label):
+    """"anion" (AN*), "cation" (CA*) or "solvent" (any other P*: PL*, or P1*, P2*, ... in copolymers)."""
+    if label.startswith("AN"):
+        return "anion"
+    if label.startswith("CA"):
+        return "cation"
+    if label.startswith("P"):
+        return "solvent"
+    raise ValueError(f"unknown HiTPoly type label {label!r}: expected P* (solvent/polymer), AN* or CA*")
 
 # Atomic masses (pymatgen values) used for the centre-of-mass correction.
 MASSES = {"H": 1.00794, "Li": 6.941, "B": 10.811, "C": 12.0107, "N": 14.0067, "O": 15.9994, "F": 18.9984032,
@@ -35,7 +44,7 @@ class Topology:
     @property
     def kinds(self):
         """(n_atoms,) "solvent", "anion" or "cation" from the type prefix."""
-        return np.array([KIND_PREFIXES[t[:2]] for t in self.types])
+        return np.array([residue_kind(t) for t in self.types])
 
     @property
     def n_atoms(self):

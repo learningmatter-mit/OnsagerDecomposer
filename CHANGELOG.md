@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Copolymers: HiTPoly type labels P1*, P2*, ... (one per monomer block) are read as polymer, as in the
+  original analysis code. Before, any label other than PL*, AN* or CA* stopped `compute_shells` with a KeyError.
+
 ## 1.0.0 — 2026-10-25
 
 First public release: a rewrite of the research code (v0.5.3) used for the paper
