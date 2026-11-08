@@ -36,6 +36,20 @@ It works for **liquid**, **polymer** and **crystalline** ion conductors.
 | 3. Decomposition | Each cation is split into one virtual particle per event; event-resolved self and distinct correlations from FFTs | `decompose` |
 | 4. Transport | D_self, σ_NE, share and effectiveness (D^m / p_m) of every event | `self_diffusion_table`, `per_macrostate` |
 
+## System requirements
+
+- **Operating system:** Linux or macOS (both tested); pure Python, nothing to compile, so other platforms with
+  Python 3.9 or later should also work.
+- **Dependencies:** numpy, scipy, pandas. Crystals also need ase and networkx; the tests need pytest.
+- **Tested on:**
+  - Ubuntu (GitHub Actions `ubuntu-latest`) with Python 3.9 and 3.12, using the latest dependency releases
+    for each Python version, on every push.
+  - macOS 27 (Apple M3 Max), Python 3.10.18 with numpy 1.26.4 and 2.2.6, scipy 1.14.1, pandas 2.2.2 and 2.3.3,
+    ase 3.25.0, networkx 3.4.2.
+- **Hardware:** no special hardware (no GPU). The demo needs under 1 GB of memory. A full analysis of a
+  500 ns polymer run (50,000 frames, 288 Li) needs about 5 GB. Computing shells from a long trajectory
+  runs in parallel over frames (`n_workers`), so more CPU cores make it faster.
+
 ## Installation
 
 ```bash
@@ -43,16 +57,51 @@ git clone https://github.com/learningmatter-mit/OnsagerDecomposer.git
 cd OnsagerDecomposer
 pip install -e .              # liquids and polymers
 pip install -e ".[crystal]"   # + crystals (ase, networkx)
+pip install -e ".[test]" && pytest -q   # optional: run the tests (about 3 s)
 ```
 
-## Try it on example data
+Typical install time is under a minute on a normal desktop computer (10 s in a fresh virtual
+environment on the test machine above, including downloading numpy, scipy and pandas).
+
+## Demo
 
 `examples/data/` holds excerpts of the paper's FAN/LiFSI (liquid) and PPM/LiTFSI (polymer) runs: 10 frames of
-input files, plus precomputed coordination shells. After installing:
+input files, plus precomputed coordination shells (details in [`examples/data/README.md`](examples/data/README.md)).
+After installing:
 
 ```bash
-python examples/quickstart.py      # shells from input files, liquid events and states, polymer events
+python examples/quickstart.py
 ```
+
+**Run time:** a few seconds on a normal desktop computer (3.5 s on the test machine; the very first
+run takes up to about 20 s while Python compiles the imports).
+
+**Expected output:** seven tables, printed as text:
+
+1. A one-line summary of the shells computed from the 10 input frames:
+   `10 frames of 11610 atoms -> 9612 shell rows (6.8 coordinating atoms per Li)`.
+2. FAN/LiFSI events at Δt = 2, 10 and 20 ps, then the SSIP/CIP/AGG macrostates at Δt = 10 ps. Each event
+   table lists, per event, its probability, D_self (cm²/s), σ_NE (mS/cm), share of the total, and
+   effectiveness. The total Li D_self is 1.85, 1.88 and 1.91 × 10⁻⁶ cm²/s at the three Δt.
+3. PPM/LiTFSI events at Δt = 0.5, 1 and 2 ns. The total Li D_self is 7.6 × 10⁻⁸ cm²/s, as in the paper.
+
+The first table looks like this:
+
+```
+2. FAN/LiFSI, dt = 2 ps
+                        probability     D_self  sigma_NE  share  effective_D_self  effective_sigma_NE
+event
+vehicular                     0.503  6.844e-07     3.161  0.370         1.359e-06               6.278
+solvent_exchange              0.274  8.820e-07     4.073  0.477         3.222e-06              14.879
+anion_exchange                0.150  1.397e-07     0.645  0.076         9.299e-07               4.295
+solvent_anion_exchange        0.073  1.432e-07     0.661  0.077         1.974e-06               9.116
+total                         1.000  1.849e-06     8.540  1.000         1.849e-06               8.540
+anion                           NaN  1.672e-06       NaN    NaN               NaN                 NaN
+```
+
+## Use on your own data
+
+The sections below show how to run each step on your own trajectories.
 
 ## Quick start: liquid or polymer electrolyte
 
@@ -146,6 +195,14 @@ into X→Y events that are decomposed the same way.
 paper's PPM/LiTFSI, FAN/LiFSI and LATP trajectories: coordination shells and event labels are
 identical, and correlation matrices and transport coefficients agree to better than 1e-9 relative. Pair sums are replaced by per-event collective sums, so the full self + distinct
 decomposition takes seconds rather than cluster-days.
+
+### Reproducing the paper
+
+The polymer example (`examples/data/ppm_litfsi_shells.npz`) reproduces the paper's PPM/LiTFSI event table
+at Δt = 0.5, 1 and 2 ns: identical event labels and probabilities, and D_self within 2 × 10⁻⁷ relative
+(`tests/test_example_data.py`). Reproducing every figure needs the full MD trajectories (tens of GB), which
+are available from the corresponding author on reasonable request. With a trajectory folder, the
+quick-start code above (paper settings in the [fitting window](#fitting-window) table) gives the paper's numbers.
 
 ## Citation
 

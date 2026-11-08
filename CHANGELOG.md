@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- README: system requirements with tested versions, install and demo run times, expected demo output,
+  and how to reproduce the paper.
 - Example data (`examples/data/`): excerpts of the paper's FAN/LiFSI and PPM/LiTFSI runs (input files for
   10 frames, precomputed shells) and `examples/quickstart.py`, which runs every step on them in seconds.
 
