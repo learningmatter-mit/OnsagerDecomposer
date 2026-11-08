@@ -45,6 +45,15 @@ pip install -e .              # liquids and polymers
 pip install -e ".[crystal]"   # + crystals (ase, networkx)
 ```
 
+## Try it on example data
+
+`examples/data/` holds excerpts of the paper's FAN/LiFSI (liquid) and PPM/LiTFSI (polymer) runs: 10 frames of
+input files, plus precomputed coordination shells. After installing:
+
+```bash
+python examples/quickstart.py      # shells from input files, liquid events and states, polymer events
+```
+
 ## Quick start: liquid or polymer electrolyte
 
 Input is a HiTPoly analysis folder with `atom_names_rdf_all.txt` (element, type, residue id per
