@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- Example data (`examples/data/`): excerpts of the paper's FAN/LiFSI and PPM/LiTFSI runs (input files for
+  10 frames, precomputed shells) and `examples/quickstart.py`, which runs every step on them in seconds.
+
 ### Fixed
 - Copolymers: HiTPoly type labels P1*, P2*, ... (one per monomer block) are read as polymer, as in the
   original analysis code. Before, any label other than PL*, AN* or CA* stopped `compute_shells` with a KeyError.
